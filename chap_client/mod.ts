@@ -1,27 +1,28 @@
 import { readLines } from "https://deno.land/std/io/mod.ts"
 import { createHash } from "https://deno.land/std/hash/mod.ts"
 import * as log from "https://deno.land/std/log/mod.ts"
+import * as colors from "https://deno.land/std@0.71.0/fmt/colors.ts"
 
 let challenge = ''
 
+const ip = await handleUserIO('IP-Adresse eingeben')
+
+const port = await handleUserIO('Port eingeben')
+
 try {
-    const data = await fetch("http://192.168.2.127:8000/")
+    const data = await fetch(`http://${ip}:${port}/`)
     const json = await data.json()
     challenge = json.challenge.toString()
 } catch (err) {
-    log.error('Server ist offline!')
+    log.error('Falsche/r IP/PORT oder Server offline')
     Deno.exit()
 }
 
+console.log(colors.green('Server ist online'))
 
-console.log('Benutzernamen eingeben')
-const userNameData = await readLines(Deno.stdin).next()
-const userName = (userNameData.value as string).replace('\r', '')
+const userName = await handleUserIO('Benutzernamen eingeben')
 
-console.log('Passwort eingeben')
-const passwordData = await readLines(Deno.stdin).next();
-const password = (passwordData.value as string).replace('\r', '')
-
+const password = await handleUserIO('Passwort eingeben')
 
 const hash = createHash('md5')
 
@@ -45,9 +46,9 @@ const response = await fetch("http://192.168.2.127:8000/", {
 const { authenticated } = await response.json().catch(() => log.error('Falsche Login-Daten'))
 
 if (authenticated) {
-    log.info('Login erfolgreich')
+    console.log(colors.green('Login erfolgreich'))
 } else {
-    log.error('Login fehlgeschlagen')
+    console.log(colors.red('Login fehlgeschlagen'))
     Deno.exit()
 }
 
@@ -83,7 +84,22 @@ while (true) {
     })
 }
 function formatTime(date: Date) {
-    return `${date.getHours()}:${date.getMinutes()}`
+
+    let minutes = date.getMinutes()
+    const min = minutes.toString().length < 2 ? '0' + minutes : minutes
+    return `${date.getHours()}:${min}`
+}
+
+async function handleUserIO(consoleOutPut: string) {
+
+    let input = ''
+
+    while (!input) {
+        console.log(consoleOutPut)
+        const rawInput = (await readLines(Deno.stdin).next()).value
+        input = (rawInput as string).replace('\r', '')
+    }
+    return input
 }
 
 
