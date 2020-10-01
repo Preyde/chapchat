@@ -6,14 +6,20 @@ Um ein Deno Projekt auszuführen muss die Laufzeitumgebung gedownloaded werden. 
 
 https://deno.land/manual/getting_started/installation
 
+Ausgeführt wird eine Datei mit Hilfe des commands: deno run --allow-all [dateiname]
+
+--allow-all berechtigt das Programm alles zu tun. Stattdessen kann auch einzeln --allow-net, --allow-read und --allow-write mitgegeben werden
+
+Beispiel innerhalb des Ordners chapchat-master:
+
+deno run --allow-all chap_server/mod.ts
+
 Funktion:
 
 - Anmeldung am Server mit dem CHAP-Authentifizierungsverfahren
 - Gruppenchat über die Konsole mit mehreren Clients im lokalen Netzwerk
 
 Verwendung:
-
-
 
 CHAP_SERVER: Nach Ausführen der mod.ts Datei ist sonst nichts zu beachten. Bei erfolgreichem Start kommt in der Konsole eine Info Nachricht, mit dem verwendeten Port.
 
